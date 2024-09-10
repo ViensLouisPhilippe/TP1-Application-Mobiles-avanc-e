@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tp1/accueil.dart';
 
-class connexion extends StatelessWidget {
+class Connexion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -65,7 +66,11 @@ class _SignInScreenState extends State<SignInScreen> {
                     final username = _usernameController.text;
                     final password = _passwordController.text;
                     // TODO prochaine page a loader une fois successfull
-
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Accueil(),
+                      ),
+                    );
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Signing In...')),
                     );

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'accueil.dart';
 
-class inscription extends StatelessWidget {
+
+class Inscription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -101,7 +103,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     final email = _emailController.text;
                     final password = _passwordController.text;
                     // TODO prochaine page a loader une fois successfull
-
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Accueil(),
+                      ),
+                    );
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Processing Data')),
                     );

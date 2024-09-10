@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: (){
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => inscription(),
+                      MaterialPageRoute(builder: (context) => Inscription(),
                       ),
                     );
                   },
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: (){
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => connexion(),
+                      MaterialPageRoute(builder: (context) => Connexion(),
                       ),
                     );
                   },
