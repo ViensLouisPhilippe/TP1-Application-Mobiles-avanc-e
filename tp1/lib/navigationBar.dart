@@ -35,7 +35,7 @@ class NavBar extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text('Home'),
             onTap: () {
-              Navigator.of(context).pushNamed(principal_page);
+              Navigator.of(context).pushNamed('');
             },
           ),
           ListTile(
