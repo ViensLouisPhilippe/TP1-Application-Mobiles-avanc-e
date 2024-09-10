@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tp1/principal_page.dart';
 
-import 'accueil.dart';
 
 
 class Inscription extends StatelessWidget {
@@ -105,7 +105,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     // TODO prochaine page a loader une fois successfull
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Accueil(),
+                      MaterialPageRoute(builder: (context) => PrincipalPage(),
                       ),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(

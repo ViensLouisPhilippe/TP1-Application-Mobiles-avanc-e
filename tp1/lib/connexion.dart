@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tp1/accueil.dart';
+import 'package:tp1/principal_page.dart';
 
 class Connexion extends StatelessWidget {
   @override
@@ -68,7 +68,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     // TODO prochaine page a loader une fois successfull
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Accueil(),
+                      MaterialPageRoute(builder: (context) => PrincipalPage(),
                       ),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
