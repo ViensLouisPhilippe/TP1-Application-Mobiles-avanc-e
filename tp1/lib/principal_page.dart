@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tp1/main.dart';
+
 
 
 class PrincipalPage extends StatelessWidget {
+  const PrincipalPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -10,7 +14,12 @@ class PrincipalPage extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Accueil(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const Accueil(),
+        '/creation': (context) => Creation(onTaskCreated: (task) {}),
+        '/main': (context) => const MyApp(),
+      },
     );
   }
 }
@@ -29,8 +38,10 @@ class Task {
   });
 }
 
-// PAGE ACCUEIL
+//PAGE ACCUEIL
 class Accueil extends StatefulWidget {
+  const Accueil({super.key});
+
   @override
   _AccueilState createState() => _AccueilState();
 }
@@ -47,11 +58,12 @@ class _AccueilState extends State<Accueil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const NavBar(),
       appBar: AppBar(
-        title: Text('Task List'),
+        title: const Text('Task List'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () {
               Navigator.push(
                 context,
@@ -72,9 +84,14 @@ class _AccueilState extends State<Accueil> {
           return ListTile(
             title: Text(task.name),
             subtitle: Text('Progress: ${task.progress}% | Elapsed Time: ${task.elapsedTime}%'),
-            trailing: Text('${DateFormat('yyyy-MM-dd').format(task.dueDate)}'),
+            trailing: Text(DateFormat('yyyy-MM-dd').format(task.dueDate)),
             onTap: () {
-              //Eventuel bouton consultation
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Consultation(task: task),
+                ),
+              );
             },
           );
         },
@@ -82,11 +99,13 @@ class _AccueilState extends State<Accueil> {
     );
   }
 }
+
+
 //PAGE CREATION
 class Creation extends StatefulWidget {
   final Function(Task) onTaskCreated;
 
-  Creation({required this.onTaskCreated});
+  const Creation({super.key, required this.onTaskCreated});
 
   @override
   _CreationState createState() => _CreationState();
@@ -126,8 +145,9 @@ class _CreationState extends State<Creation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const NavBar(),
       appBar: AppBar(
-        title: Text('Create Task'),
+        title: const Text('Create Task'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -136,26 +156,120 @@ class _CreationState extends State<Creation> {
           children: [
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: 'Task Name'),
+              decoration: const InputDecoration(labelText: 'Task Name'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               _dueDate == null
                   ? 'Select Due Date'
                   : 'Due Date: ${DateFormat('yyyy-MM-dd').format(_dueDate!)}',
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _selectDueDate,
-              child: Text('Pick a Date'),
+              child: const Text('Pick a Date'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _submitTask,
-              child: Text('Add Task'),
+              child: const Text('Add Task'),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+
+//PAGE CONSULTATION
+class Consultation extends StatelessWidget {
+  final Task task;
+
+  const Consultation({super.key, required this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: const NavBar(),
+      appBar: AppBar(
+        title: const Text('Task Details'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Name: ${task.name}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            Text('Progress: ${task.progress}%', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 10),
+            Text('Elapsed Time: ${task.elapsedTime}%', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 10),
+            Text('Due Date: ${DateFormat('yyyy-MM-dd').format(task.dueDate)}', style: const TextStyle(fontSize: 18)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+//NAVIGATION BAR
+class NavBar extends StatelessWidget {
+  const NavBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          UserAccountsDrawerHeader(
+            accountName: const Text('exemple'),
+            accountEmail: const Text('exemple@gmail.com'),
+            currentAccountPicture: CircleAvatar(
+              child: ClipOval(
+                child: Image.network('https://tmssl.akamaized.net//images/foto/galerie/lionel-messi-argentinien-2022-1698689902-120754.jpg?lm=1698689910',
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            decoration: const BoxDecoration(
+              image: DecorationImage
+                (image: NetworkImage(
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpn1HdAxEkkXu52D7NKjnhnNIoUBWSXy1muw&s'
+              ),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.home),
+            title: Text('Home'),
+            onTap: () {
+              Navigator.of(context).pushNamed('/');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.add),
+            title: Text('Create Task'),
+            onTap: () {
+              Navigator.of(context).pushNamed('/creation');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.logout),
+            title: Text('Log out'),
+            onTap: () {
+              print('Logging out');
+              Navigator.pop(context);
+              Navigator.of(context).pushNamed('/main');
+            },
+          ),
+        ],
       ),
     );
   }
