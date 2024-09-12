@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'connexion.dart';
@@ -34,12 +35,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final dio = Dio();
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  void getHttp() async {
+    final response = await dio.get('https://dart.dev');
+    print(response);
   }
 
   @override
