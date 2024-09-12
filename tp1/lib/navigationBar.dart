@@ -40,12 +40,12 @@ class NavBar extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.add),
-            title: Text('Create Task'),
+            title: const Text('Create Task'),
             onTap: () => print('Creation'),
           ),
           ListTile(
             leading: Icon(Icons.logout),
-            title: Text('Log out'),
+            title: const Text('Log out'),
             onTap: () => print('deconnection'),
           ),
         ],

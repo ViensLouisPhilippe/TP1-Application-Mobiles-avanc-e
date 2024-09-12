@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tp1/connexion.dart';
 import 'package:tp1/principal_page.dart';
 
 
@@ -114,6 +115,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
                 },
                 child: Text('Sign Up'),
+              ),
+              ElevatedButton(
+                child : Text("Already have a account ?"),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Connexion(),
+                    ),
+                  );
+                },
               ),
             ],
           ),

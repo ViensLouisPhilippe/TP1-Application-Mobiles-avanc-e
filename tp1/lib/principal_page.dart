@@ -112,6 +112,7 @@ class Creation extends StatefulWidget {
 }
 
 class _CreationState extends State<Creation> {
+  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   DateTime? _dueDate;
 
@@ -130,15 +131,21 @@ class _CreationState extends State<Creation> {
   }
 
   void _submitTask() {
-    if (_nameController.text.isNotEmpty && _dueDate != null) {
-      final newTask = Task(
-        name: _nameController.text,
-        progress: 0,
-        elapsedTime: 0,
-        dueDate: _dueDate!,
-      );
-      widget.onTaskCreated(newTask);
-      Navigator.pop(context);
+    if (_formKey.currentState?.validate() ?? false) {
+      if (_dueDate != null) {
+        final newTask = Task(
+          name: _nameController.text,
+          progress: 0,
+          elapsedTime: 0,
+          dueDate: _dueDate!,
+        );
+        widget.onTaskCreated(newTask);
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please pick a due date.')),
+        );
+      }
     }
   }
 
@@ -151,30 +158,45 @@ class _CreationState extends State<Creation> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Task Name'),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              _dueDate == null
-                  ? 'Select Due Date'
-                  : 'Due Date: ${DateFormat('yyyy-MM-dd').format(_dueDate!)}',
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _selectDueDate,
-              child: const Text('Pick a Date'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submitTask,
-              child: const Text('Add Task'),
-            ),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Task Name'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a task name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              Text(
+                _dueDate == null
+                    ? 'Select Due Date'
+                    : 'Due Date: ${DateFormat('yyyy-MM-dd').format(_dueDate!)}',
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: _selectDueDate,
+                child: const Text('Pick a Date'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _submitTask,
+                child: const Text('Add Task'),
+              ),
+              ElevatedButton(
+                child : const Text("Go back"),
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -207,6 +229,12 @@ class Consultation extends StatelessWidget {
             Text('Elapsed Time: ${task.elapsedTime}%', style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
             Text('Due Date: ${DateFormat('yyyy-MM-dd').format(task.dueDate)}', style: const TextStyle(fontSize: 18)),
+            ElevatedButton(
+              child : Text("Go back"),
+              onPressed: (){
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
       ),
@@ -250,6 +278,7 @@ class NavBar extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text('Home'),
             onTap: () {
+              Navigator.of(context).pop();
               Navigator.of(context).pushNamed('/');
             },
           ),
@@ -257,6 +286,7 @@ class NavBar extends StatelessWidget {
             leading: Icon(Icons.add),
             title: Text('Create Task'),
             onTap: () {
+              Navigator.of(context).pop();
               Navigator.of(context).pushNamed('/creation');
             },
           ),
@@ -265,8 +295,11 @@ class NavBar extends StatelessWidget {
             title: Text('Log out'),
             onTap: () {
               print('Logging out');
-              Navigator.pop(context);
-              Navigator.of(context).pushNamed('/main');
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/main',
+                    (Route<dynamic> route) => false,
+              );
             },
           ),
         ],

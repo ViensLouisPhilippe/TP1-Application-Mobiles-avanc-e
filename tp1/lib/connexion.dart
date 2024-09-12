@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tp1/inscription.dart';
 import 'package:tp1/principal_page.dart';
+import 'package:tp1/main.dart';
 
 class Connexion extends StatelessWidget {
   @override
@@ -78,6 +80,17 @@ class _SignInScreenState extends State<SignInScreen> {
                 },
                 child: Text('Sign In'),
               ),
+              ElevatedButton(
+                child : Text("Don't have a account sign here"),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Inscription(),
+                    ),
+                  );
+                },
+              ),
+
             ],
           ),
         ),
