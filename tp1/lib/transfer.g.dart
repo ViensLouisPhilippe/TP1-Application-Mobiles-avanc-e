@@ -22,3 +22,39 @@ Map<String, dynamic> _$HomeItemResponseToJson(HomeItemResponse instance) =>
       'percentageTimeSpent': instance.percentageTimeSpent,
       'deadline': instance.deadline.toIso8601String(),
     };
+
+TaskDetailResponse _$TaskDetailResponseFromJson(Map<String, dynamic> json) =>
+    TaskDetailResponse()
+      ..id = (json['id'] as num).toInt()
+      ..name = json['name'] as String
+      ..percentageDone = (json['percentageDone'] as num).toInt()
+      ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toDouble()
+      ..deadline = DateTime.parse(json['deadline'] as String);
+
+Map<String, dynamic> _$TaskDetailResponseToJson(TaskDetailResponse instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'percentageDone': instance.percentageDone,
+      'percentageTimeSpent': instance.percentageTimeSpent,
+      'deadline': instance.deadline.toIso8601String(),
+    };
+
+SignupRequest _$SignupRequestFromJson(Map<String, dynamic> json) =>
+    SignupRequest()
+      ..username = json['username'] as String
+      ..password = json['password'] as String;
+
+Map<String, dynamic> _$SignupRequestToJson(SignupRequest instance) =>
+    <String, dynamic>{
+      'username': instance.username,
+      'password': instance.password,
+    };
+
+SigninResponse _$SigninResponseFromJson(Map<String, dynamic> json) =>
+    SigninResponse()..username = json['username'] as String;
+
+Map<String, dynamic> _$SigninResponseToJson(SigninResponse instance) =>
+    <String, dynamic>{
+      'username': instance.username,
+    };

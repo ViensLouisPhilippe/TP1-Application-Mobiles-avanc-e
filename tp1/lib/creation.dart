@@ -1,10 +1,14 @@
 //PAGE CREATION
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:tp1/transfer.dart';
+
+import 'navigationBar.dart';
 
 class Creation extends StatefulWidget {
-  final Function(Task) onTaskCreated;
+  //final Function(HomeItemResponse) onTaskCreated;
 
-  const Creation({super.key, required this.onTaskCreated});
+  const Creation({super.key /*, required this.onTaskCreated*/});
 
   @override
   _CreationState createState() => _CreationState();
@@ -30,6 +34,7 @@ class _CreationState extends State<Creation> {
   }
 
   void _submitTask() {
+
     if (_formKey.currentState?.validate() ?? false) {
       if (_dueDate != null) {
         final newTask = Task(
@@ -38,7 +43,6 @@ class _CreationState extends State<Creation> {
           elapsedTime: 0,
           dueDate: _dueDate!,
         );
-        widget.onTaskCreated(newTask);
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

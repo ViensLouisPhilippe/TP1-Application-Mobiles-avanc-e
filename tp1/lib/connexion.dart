@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tp1/inscription.dart';
-import 'package:tp1/principal_page.dart';
+import 'package:tp1/accueil.dart';
 import 'package:tp1/main.dart';
 
 /*class Connexion extends StatelessWidget {
@@ -16,12 +16,12 @@ import 'package:tp1/main.dart';
   }
 }*/
 
-class SignInScreen extends StatefulWidget {
+class Connection extends StatefulWidget {
   @override
-  _SignInScreenState createState() => _SignInScreenState();
+  _ConnectionState createState() => _ConnectionState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _ConnectionState extends State<Connection> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -85,7 +85,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 onPressed: (){
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SignUpScreen(),
+                    MaterialPageRoute(builder: (context) => Inscription(),
                     ),
                   );
                 },

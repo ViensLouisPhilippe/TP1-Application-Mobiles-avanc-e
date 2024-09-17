@@ -1,5 +1,8 @@
 //NAVIGATION BAR
 import 'package:flutter/material.dart';
+import 'package:tp1/accueil.dart';
+import 'package:tp1/connexion.dart';
+import 'package:tp1/creation.dart';
 
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
@@ -36,7 +39,12 @@ class NavBar extends StatelessWidget {
             title: Text('Home'),
             onTap: () {
               Navigator.of(context).pop();
-              Navigator.of(context).pushNamed('/');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Accueil(),
+                ),
+              );
             },
           ),
           ListTile(
@@ -44,7 +52,12 @@ class NavBar extends StatelessWidget {
             title: Text('Create Task'),
             onTap: () {
               Navigator.of(context).pop();
-              Navigator.of(context).pushNamed('/creation');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Creation(onTaskCreated: onTaskCreated),
+                ),
+              );
             },
           ),
           ListTile(
@@ -52,10 +65,11 @@ class NavBar extends StatelessWidget {
             title: Text('Log out'),
             onTap: () {
               print('Logging out');
-              Navigator.pushNamedAndRemoveUntil(
+              Navigator.push(
                 context,
-                '/main',
-                    (Route<dynamic> route) => false,
+                MaterialPageRoute(
+                  builder: (context) => Connection(),
+                ),
               );
             },
           ),

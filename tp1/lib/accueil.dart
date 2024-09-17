@@ -68,19 +68,7 @@ class _AccueilState extends State<Accueil> {
       tasks.add(task);
     });
   }
-  final dio = Dio();
 
-  void getHttpList() async {
-    final response = await dio.get('http://10.0.2.2:8080/home');
-    print(response);
-    var listJson = response.data as List;
-    var listTask = listJson.map(
-        (elementJSON) {
-          //return  .fromJson(elementJSON);
-        }
-    ).toList();
-
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -268,3 +256,5 @@ class Consultation extends StatelessWidget {
 }*/
 
 
+
+//NOTE faire 'Flutter clean' avant la remise

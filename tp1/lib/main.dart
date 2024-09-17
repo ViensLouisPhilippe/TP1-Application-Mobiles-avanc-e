@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:tp1/principal_page.dart';
+import 'package:tp1/accueil.dart';
 import 'connexion.dart';
 import 'inscription.dart';
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: SignInScreen(),
+      home: Connection(),
       /*initialRoute: '/',
       routes: {
         '/': (context) => const Accueil(),

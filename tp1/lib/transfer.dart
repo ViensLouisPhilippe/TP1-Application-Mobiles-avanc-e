@@ -39,7 +39,6 @@ class HomeItemResponse {
   Map<String, dynamic> toJson() => _$HomeItemResponseToJson(this);
 }
 
-/*
 @JsonSerializable()
 class TaskDetailResponse {
   TaskDetailResponse();
@@ -54,4 +53,25 @@ class TaskDetailResponse {
   factory TaskDetailResponse.fromJson(Map<String, dynamic> json) => _$TaskDetailResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$TaskDetailResponseToJson(this);
-}*/
+}
+
+
+@JsonSerializable()
+class SignupRequest {
+  SignupRequest();
+  String username = '';
+  String password = '';
+  factory SignupRequest.fromJson(Map<String, dynamic> json) => _$SignupRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SignupRequestToJson(this);
+  }
+
+@JsonSerializable()
+class SigninResponse {
+  SigninResponse();
+
+  String username = '';
+  factory SigninResponse.fromJson(Map<String, dynamic> json) => _$SigninResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SigninResponseToJson(this);
+}

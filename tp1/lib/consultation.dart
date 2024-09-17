@@ -8,7 +8,12 @@ class Consultation extends StatefulWidget {
 
   const Consultation({super.key, required this.task});
 
+  @override
+    _ConsultationState createState() => _ConsultationState();
+
 }
+
+class _ConsultationState extends State<Consultation> {
 
 
   @override
