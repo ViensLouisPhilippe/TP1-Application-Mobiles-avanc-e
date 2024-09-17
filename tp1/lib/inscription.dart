@@ -4,7 +4,7 @@ import 'package:tp1/principal_page.dart';
 
 
 
-class Inscription extends StatelessWidget {
+/*class Inscription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,7 +15,7 @@ class Inscription extends StatelessWidget {
       home: SignUpScreen(),
     );
   }
-}
+}*/
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -106,7 +106,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     // TODO prochaine page a loader une fois successfull
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => PrincipalPage(),
+                      MaterialPageRoute(builder: (context) => Accueil(),
                       ),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -121,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 onPressed: (){
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Connexion(),
+                    MaterialPageRoute(builder: (context) => SignInScreen(),
                     ),
                   );
                 },

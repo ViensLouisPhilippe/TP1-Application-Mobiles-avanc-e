@@ -1,6 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
+import 'package:dio/dio.dart';
+import 'package:tp1/principal_page.dart';
 import 'connexion.dart';
 import 'inscription.dart';
 
@@ -20,12 +20,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: SignInScreen(),
+      /*initialRoute: '/',
+      routes: {
+        '/': (context) => const Accueil(),
+        '/creation': (context) => Creation(onTaskCreated: (task) {}),
+        '/main': (context) => const MyApp(),
+      },*/
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+/*class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
@@ -38,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final dio = Dio();
 
   void getHttp() async {
-    final response = await dio.get('https://dart.dev');
+    final response = await dio.get('http://10.0.2.2:8080/');
     print(response);
   }
 
@@ -69,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ElevatedButton(
                   child : Text("Sign In"),
                   onPressed: (){
+                    //getHttp();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => Connexion(),
@@ -83,4 +90,4 @@ class _MyHomePageState extends State<MyHomePage> {
       )
     );
   }
-}
+}*/

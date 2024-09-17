@@ -1,11 +1,19 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tp1/main.dart';
+import 'package:tp1/transfer.dart';
+
+import 'consultation.dart';
+import 'creation.dart';
+import 'navigationBar.dart';
 
 
 
+/*
 class PrincipalPage extends StatelessWidget {
   const PrincipalPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +31,9 @@ class PrincipalPage extends StatelessWidget {
     );
   }
 }
+*/
 
-class Task {
+/*class Task {
   final String name;
   final double progress;
   final double elapsedTime;
@@ -36,7 +45,10 @@ class Task {
     required this.elapsedTime,
     required this.dueDate,
   });
-}
+}*/
+
+
+
 
 //PAGE ACCUEIL
 class Accueil extends StatefulWidget {
@@ -47,14 +59,28 @@ class Accueil extends StatefulWidget {
 }
 
 class _AccueilState extends State<Accueil> {
-  List<Task> tasks = [];
 
-  void _addTask(Task task) {
+
+  List<HomeItemResponse> tasks = [];
+
+  void _addTask(HomeItemResponse task) {
     setState(() {
       tasks.add(task);
     });
   }
+  final dio = Dio();
 
+  void getHttpList() async {
+    final response = await dio.get('http://10.0.2.2:8080/home');
+    print(response);
+    var listJson = response.data as List;
+    var listTask = listJson.map(
+        (elementJSON) {
+          //return  .fromJson(elementJSON);
+        }
+    ).toList();
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,8 +127,7 @@ class _AccueilState extends State<Accueil> {
 }
 
 
-//PAGE CREATION
-class Creation extends StatefulWidget {
+/*class Creation extends StatefulWidget {
   final Function(Task) onTaskCreated;
 
   const Creation({super.key, required this.onTaskCreated});
@@ -240,74 +265,6 @@ class Consultation extends StatelessWidget {
       ),
     );
   }
-}
-
-
-//NAVIGATION BAR
-class NavBar extends StatelessWidget {
-  const NavBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          UserAccountsDrawerHeader(
-            accountName: const Text('exemple'),
-            accountEmail: const Text('exemple@gmail.com'),
-            currentAccountPicture: CircleAvatar(
-              child: ClipOval(
-                child: Image.network('https://tmssl.akamaized.net//images/foto/galerie/lionel-messi-argentinien-2022-1698689902-120754.jpg?lm=1698689910',
-                  width: 90,
-                  height: 90,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            decoration: const BoxDecoration(
-              image: DecorationImage
-                (image: NetworkImage(
-                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpn1HdAxEkkXu52D7NKjnhnNIoUBWSXy1muw&s'
-              ),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Home'),
-            onTap: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushNamed('/');
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.add),
-            title: Text('Create Task'),
-            onTap: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushNamed('/creation');
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.logout),
-            title: Text('Log out'),
-            onTap: () {
-              print('Logging out');
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/main',
-                    (Route<dynamic> route) => false,
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-
+}*/
 
 
