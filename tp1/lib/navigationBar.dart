@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tp1/accueil.dart';
 import 'package:tp1/connexion.dart';
 import 'package:tp1/creation.dart';
+import 'package:tp1/service.dart';
 
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
@@ -63,8 +64,9 @@ class NavBar extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.logout),
             title: Text('Log out'),
-            onTap: () {
+            onTap: () async {
               print('Logging out');
+              await postHttpSignout();
               Navigator.push(
                 context,
                 MaterialPageRoute(

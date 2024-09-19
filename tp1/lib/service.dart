@@ -53,11 +53,6 @@ Future<List<HomeItemResponse>> getHttpList() async {
 
 
 Future<SigninResponse> postHttpSignIn(SignupRequest signupResquest) async{
-
-  // var response = await dio.post('http://10.0.2.2:8080/api/id/signin', data: signupResquest.toJson());
-  // print(response);
-  // return SigninResponse.fromJson(response.data);
-
   try {
     var response = await SingletonDio.getDio()
         .post('http://10.0.2.2:8080/api/id/signin', data: signupResquest.toJson());
@@ -69,10 +64,6 @@ Future<SigninResponse> postHttpSignIn(SignupRequest signupResquest) async{
   }
 }
 Future<SigninResponse> postHttpSignUp(SignupRequest signUpRequest) async{
-  // var response = await dio.post('http://10.0.2.2:8080/api/id/signup', data: signUpRequest.toJson());
-  // print(response);
-  // return SignupRequest.fromJson(response.data);
-
   try {
     var response = await SingletonDio.getDio()
         .post('http://10.0.2.2:8080/api/id/signup', data: signUpRequest.toJson());
@@ -83,4 +74,25 @@ Future<SigninResponse> postHttpSignUp(SignupRequest signUpRequest) async{
     rethrow;
   }
 }
+Future<void> postHttpSignout() async{
+  try {
+    var response = await SingletonDio.getDio()
+        .post('http://10.0.2.2:8080/api/id/signout');
+    print(response);
+  } catch (e) {
+    print(e);
+    rethrow;
+  }
+}
 
+
+Future<void> getHttpUpdateProgress(int id, int progress) async{
+  try {
+    var response = await SingletonDio.getDio()
+        .get('http://10.0.2.2:8080/api/progress/$id/$progress');
+    print(response);
+  } catch (e) {
+    print(e);
+    rethrow;
+  }
+}

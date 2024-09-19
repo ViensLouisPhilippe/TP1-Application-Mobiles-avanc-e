@@ -27,7 +27,7 @@ TaskDetailResponse _$TaskDetailResponseFromJson(Map<String, dynamic> json) =>
     TaskDetailResponse()
       ..id = (json['id'] as num).toInt()
       ..name = json['name'] as String
-      ..percentageDone = (json['percentageDone'] as num).toInt()
+      ..percentageDone = (json['percentageDone'] as num).toDouble()
       ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toDouble()
       ..deadline = DateTime.parse(json['deadline'] as String);
 

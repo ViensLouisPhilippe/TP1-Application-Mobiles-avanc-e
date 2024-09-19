@@ -45,7 +45,7 @@ class TaskDetailResponse {
 
   int id = 0;
   String name = '';
-  int percentageDone = 0;
+  double percentageDone = 0;
   double percentageTimeSpent = 0.0;
   DateTime deadline = DateTime.now();
   // List<ProgressEvent> events = [];

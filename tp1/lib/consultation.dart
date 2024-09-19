@@ -1,9 +1,11 @@
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
 
+import 'accueil.dart';
 import 'navigationBar.dart';
 
 class Consultation extends StatefulWidget {
@@ -80,14 +82,30 @@ class _ConsultationState extends State<Consultation> {
             ),
             ElevatedButton(
               child : Text("Update Progress"),
-              onPressed: (){
-                Navigator.pop(context);
+              onPressed: () async {
+                try{
+                  task!.percentageDone = _currentSliderValue;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Accueil(),
+                    ),
+                  );
+                  await getHttpUpdateProgress(task!.id, task!.percentageDone.toInt());
+                }on DioException catch (e) {
+                  print(e);
+                }
+
+
               },
             ),
             ElevatedButton(
               child : Text("Go back"),
               onPressed: (){
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Accueil(),
+                  ),
+                );
               },
             ),
           ],
