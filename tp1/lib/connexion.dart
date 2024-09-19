@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tp1/inscription.dart';
 import 'package:tp1/accueil.dart';
 import 'package:tp1/main.dart';
+import 'package:tp1/service.dart';
+import 'package:tp1/transfer.dart';
 
 /*class Connexion extends StatelessWidget {
   @override
@@ -62,21 +65,32 @@ class _ConnectionState extends State<Connection> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    // Form is valid; perform the sign-in action
-                    final username = _usernameController.text;
-                    final password = _passwordController.text;
-                    // TODO prochaine page a loader une fois successfull
+                onPressed: () async{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Signing In...')),
+                  );
+                  try {
+                    SignupRequest req = SignupRequest();
+                    req.username = _usernameController.text;
+                    req.password = _passwordController.text;
+                    var reponse = await postHttpSignIn(req);
+                    print(reponse);
+                  } on DioException catch (e) {
+                    print(e);
+                    String message = e.response!.data;
+                    if (message == "BadCredentialsException") {
+                      print('login deja utilise');
+                      rethrow;
+                    } else {
+                      print('autre erreurs');
+                      rethrow;
+                    }
+                  }
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => Accueil(),
                       ),
                     );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Signing In...')),
-                    );
-                  }
                 },
                 child: Text('Sign In'),
               ),

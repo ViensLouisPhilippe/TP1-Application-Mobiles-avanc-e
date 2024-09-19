@@ -1,6 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tp1/connexion.dart';
 import 'package:tp1/accueil.dart';
+import 'package:tp1/service.dart';
+import 'package:tp1/transfer.dart';
 
 
 
@@ -53,21 +56,6 @@ class _InscriptionState extends State<Inscription> {
                 },
               ),
               TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an email address';
-                  }
-                  final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
-                  if (!emailRegex.hasMatch(value)) {
-                    return 'Please enter a valid email address';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(labelText: 'Password'),
                 obscureText: true,
@@ -97,22 +85,34 @@ class _InscriptionState extends State<Inscription> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    // Form is valid; perform the sign-up action
-                    final username = _usernameController.text;
-                    final email = _emailController.text;
-                    final password = _passwordController.text;
-                    // TODO prochaine page a loader une fois successfull
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Accueil(),
-                      ),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Processing Data')),
-                    );
+                onPressed: () async{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Processing Data...')),
+                  );
+                  try {
+                    SignupRequest req = SignupRequest();
+                    req.username = _usernameController.text;
+                    req.password = _passwordController.text;
+                    var reponse = await postHttpSignUp(req);
+                    print(reponse);
+                  } on DioException catch (e) {
+                    print(e);
+                    String message = e.response!.data;
+                    if (message == "BadCredentialsException") {
+                      print('login deja utilise');
+                      rethrow;
+                    } else {
+                      print('autre erreurs');
+                      rethrow;
+                    }
                   }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Accueil(),
+                    ),
+                  );
+
+
                 },
                 child: Text('Sign Up'),
               ),

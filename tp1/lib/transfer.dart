@@ -54,7 +54,15 @@ class TaskDetailResponse {
 
   Map<String, dynamic> toJson() => _$TaskDetailResponseToJson(this);
 }
+@JsonSerializable()
+class AddTaskRequest {
+  AddTaskRequest();
+  String name = '';
+  DateTime deadline = DateTime.now();
+  factory AddTaskRequest.fromJson(Map<String, dynamic> json) => _$AddTaskRequestFromJson(json);
 
+  Map<String, dynamic> toJson() => _$AddTaskRequestToJson(this);
+}
 
 @JsonSerializable()
 class SignupRequest {
@@ -74,4 +82,15 @@ class SigninResponse {
   factory SigninResponse.fromJson(Map<String, dynamic> json) => _$SigninResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$SigninResponseToJson(this);
+}
+
+@JsonSerializable()
+class SigninRequest {
+  SigninRequest();
+
+  String username = '';
+  String password = '';
+  factory SigninRequest.fromJson(Map<String, dynamic> json) => _$SigninRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SigninRequestToJson(this);
 }

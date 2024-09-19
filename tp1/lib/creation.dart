@@ -1,6 +1,7 @@
 //PAGE CREATION
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
 
 import 'navigationBar.dart';
@@ -33,16 +34,15 @@ class _CreationState extends State<Creation> {
     }
   }
 
-  void _submitTask() {
+  _submitTask() async {
 
     if (_formKey.currentState?.validate() ?? false) {
       if (_dueDate != null) {
-        final newTask = Task(
-          name: _nameController.text,
-          progress: 0,
-          elapsedTime: 0,
-          dueDate: _dueDate!,
-        );
+        AddTaskRequest req = AddTaskRequest();
+        req.name = _nameController.text;
+        req.deadline = _dueDate!;
+        var reponse = await postHttpAddTask(req);
+        print(reponse);
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tp1/main.dart';
+import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
 
 import 'consultation.dart';
@@ -62,11 +63,18 @@ class _AccueilState extends State<Accueil> {
 
 
   List<HomeItemResponse> tasks = [];
-
-  void _addTask(HomeItemResponse task) {
+  getTasks() async {
+    tasks = await getHttpList();
     setState(() {
-      tasks.add(task);
     });
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getTasks();
   }
 
   @override
@@ -82,9 +90,7 @@ class _AccueilState extends State<Accueil> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Creation(
-                    onTaskCreated: _addTask,
-                  ),
+                  builder: (context) => Creation(),
                 ),
               );
             },
@@ -94,16 +100,16 @@ class _AccueilState extends State<Accueil> {
       body: ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) {
-          final task = tasks[index];
+          final HomeItemResponse = tasks[index];
           return ListTile(
-            title: Text(task.name),
-            subtitle: Text('Progress: ${task.progress}% | Elapsed Time: ${task.elapsedTime}%'),
-            trailing: Text(DateFormat('yyyy-MM-dd').format(task.dueDate)),
+            title: Text(HomeItemResponse.name),
+            subtitle: Text('Progress: ${HomeItemResponse.percentageDone}% | Elapsed Time: ${HomeItemResponse.percentageTimeSpent}%'),
+            trailing: Text(DateFormat('yyyy-MM-dd').format(HomeItemResponse.deadline)),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Consultation(task: task),
+                  builder: (context) => Consultation(),
                 ),
               );
             },
