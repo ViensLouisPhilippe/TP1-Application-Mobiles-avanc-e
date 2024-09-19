@@ -109,7 +109,7 @@ class _AccueilState extends State<Accueil> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Consultation(),
+                  builder: (context) => Consultation(id: HomeItemResponse.id),
                 ),
               );
             },

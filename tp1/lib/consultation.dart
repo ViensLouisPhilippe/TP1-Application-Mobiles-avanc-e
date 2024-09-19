@@ -7,8 +7,9 @@ import 'package:tp1/transfer.dart';
 import 'navigationBar.dart';
 
 class Consultation extends StatefulWidget {
+  final int id;
 
-  const Consultation({super.key});
+  const Consultation({required this.id});
 
   @override
     _ConsultationState createState() => _ConsultationState();
@@ -17,14 +18,15 @@ class Consultation extends StatefulWidget {
 }
 
 class _ConsultationState extends State<Consultation> {
-
+  double _currentSliderValue = 0;
   TaskDetailResponse? task;
 
   getTask() async {
-    task = await getHttpDetailTask(0);
+    task = await getHttpDetailTask(this.widget.id);
     setState(() {
 
     });
+    _currentSliderValue = task!.percentageDone.toDouble();
   }
 
   @override
@@ -36,7 +38,6 @@ class _ConsultationState extends State<Consultation> {
   
   @override
   Widget build(BuildContext context) {
-
     if(task == null) {
       return Scaffold(
           drawer: const NavBar(),
@@ -62,11 +63,27 @@ class _ConsultationState extends State<Consultation> {
 
             Text('Name: ${task!.name}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
-            Text('Progress: ${task!.percentageDone}%', style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 10),
             Text('Elapsed Time: ${task!.percentageTimeSpent}%', style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
             Text('Due Date: ${DateFormat('yyyy-MM-dd').format(task!.deadline)}', style: const TextStyle(fontSize: 18)),
+
+            Slider(
+              value: _currentSliderValue,
+              max: 100,
+              divisions: 100,
+              label: _currentSliderValue.round().toString(),
+              onChanged: (double value) {
+                setState(() {
+                  _currentSliderValue = value;
+                });
+              },
+            ),
+            ElevatedButton(
+              child : Text("Update Progress"),
+              onPressed: (){
+                Navigator.pop(context);
+              },
+            ),
             ElevatedButton(
               child : Text("Go back"),
               onPressed: (){

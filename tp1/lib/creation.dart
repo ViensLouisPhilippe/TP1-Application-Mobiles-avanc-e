@@ -1,6 +1,7 @@
 //PAGE CREATION
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tp1/accueil.dart';
 import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
 
@@ -34,21 +35,23 @@ class _CreationState extends State<Creation> {
     }
   }
 
-  _submitTask() async {
+  Future<void> _submitTask() async {
+    if (_dueDate != null) {
 
-    if (_formKey.currentState?.validate() ?? false) {
-      if (_dueDate != null) {
-        AddTaskRequest req = AddTaskRequest();
-        req.name = _nameController.text;
-        req.deadline = _dueDate!;
-        var reponse = await postHttpAddTask(req);
-        print(reponse);
-        Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please pick a due date.')),
-        );
-      }
+      AddTaskRequest req = AddTaskRequest();
+      req.name = _nameController.text;
+      req.deadline = _dueDate!;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Accueil(),
+        ),
+      );
+      await postHttpAddTask(req);
+
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please pick a due date.')),
+      );
     }
   }
 
@@ -88,7 +91,7 @@ class _CreationState extends State<Creation> {
                 child: const Text('Pick a Date'),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
+              OutlinedButton(
                 onPressed: _submitTask,
                 child: const Text('Add Task'),
               ),
