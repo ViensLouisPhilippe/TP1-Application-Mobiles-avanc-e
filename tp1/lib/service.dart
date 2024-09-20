@@ -57,17 +57,19 @@ Future<SigninResponse> postHttpSignIn(SignupRequest signupResquest) async{
     var response = await SingletonDio.getDio()
         .post('http://10.0.2.2:8080/api/id/signin', data: signupResquest.toJson());
     print(response);
+    MySingleton().setUsername(signupResquest.username);
     return SigninResponse.fromJson(response.data);
   } catch (e) {
     print(e);
     rethrow;
   }
 }
-Future<SigninResponse> postHttpSignUp(SignupRequest signUpRequest) async{
+Future<SigninResponse> postHttpSignUp(SignupRequest signupRequest) async{
   try {
     var response = await SingletonDio.getDio()
-        .post('http://10.0.2.2:8080/api/id/signup', data: signUpRequest.toJson());
+        .post('http://10.0.2.2:8080/api/id/signup', data: signupRequest.toJson());
     print(response);
+    MySingleton().setUsername(signupRequest.username);
     return SigninResponse.fromJson(response.data);
   } catch (e) {
     print(e);
@@ -94,5 +96,21 @@ Future<void> getHttpUpdateProgress(int id, int progress) async{
   } catch (e) {
     print(e);
     rethrow;
+  }
+}
+
+class MySingleton {
+  MySingleton._();
+
+  static final MySingleton _instance = MySingleton._();
+
+  factory MySingleton() {
+    return _instance;
+  }
+
+  String? username;
+
+  void setUsername(String username) {
+    this.username = username;
   }
 }

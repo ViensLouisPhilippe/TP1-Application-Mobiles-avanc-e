@@ -15,8 +15,8 @@ class NavBar extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text('exemple'),
-            accountEmail: const Text('exemple@gmail.com'),
+            accountName: Text(MySingleton().username ?? "Guest"),
+            accountEmail: const Text(''),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Image.network('https://tmssl.akamaized.net//images/foto/galerie/lionel-messi-argentinien-2022-1698689902-120754.jpg?lm=1698689910',

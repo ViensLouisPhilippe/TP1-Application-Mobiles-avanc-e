@@ -6,18 +6,6 @@ import 'package:tp1/main.dart';
 import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
 
-/*class Connexion extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Sign In Page',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: SignInScreen(),
-    );
-  }
-}*/
 
 class Connection extends StatefulWidget {
   @override

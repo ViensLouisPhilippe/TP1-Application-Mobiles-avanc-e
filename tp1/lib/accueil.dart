@@ -10,47 +10,6 @@ import 'creation.dart';
 import 'navigationBar.dart';
 
 
-
-/*
-class PrincipalPage extends StatelessWidget {
-  const PrincipalPage({super.key});
-
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Task Manager',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const Accueil(),
-        '/creation': (context) => Creation(onTaskCreated: (task) {}),
-        '/main': (context) => const MyApp(),
-      },
-    );
-  }
-}
-*/
-
-/*class Task {
-  final String name;
-  final double progress;
-  final double elapsedTime;
-  final DateTime dueDate;
-
-  Task({
-    required this.name,
-    required this.progress,
-    required this.elapsedTime,
-    required this.dueDate,
-  });
-}*/
-
-
-
-
 //PAGE ACCUEIL
 class Accueil extends StatefulWidget {
   const Accueil({super.key});
