@@ -5,21 +5,6 @@ import 'package:tp1/accueil.dart';
 import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
 
-
-
-/*class Inscription extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Sign Up Form',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: SignUpScreen(),
-    );
-  }
-}*/
-
 class Inscription extends StatefulWidget {
   @override
   _InscriptionState createState() => _InscriptionState();

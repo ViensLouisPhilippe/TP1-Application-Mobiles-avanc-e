@@ -1,6 +1,10 @@
 
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
@@ -22,6 +26,8 @@ class Consultation extends StatefulWidget {
 class _ConsultationState extends State<Consultation> {
   double _currentSliderValue = 0;
   TaskDetailResponse? task;
+  String imageURL = "";
+  Cookie? cookie;
 
   getTask() async {
     task = await getHttpDetailTask(this.widget.id);
@@ -31,6 +37,27 @@ class _ConsultationState extends State<Consultation> {
     _currentSliderValue = task!.percentageDone.toDouble();
   }
 
+  void getImageAndSend() async {
+    final ImagePicker picker = ImagePicker();
+
+    final XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(pickedImage.path, filename: pickedImage.name),
+        "taskID" : task!.id
+      });
+      String id = await postPhotoFile(formData);
+
+      imageURL = "http://10.0.2.2:8080/api/singleFile/$id";
+
+      List<Cookie> cookies = await SingletonDio.cookiemanager.cookieJar
+          .loadForRequest(Uri.parse(imageURL));
+      cookie = cookies.first;
+
+      setState(() {});
+    }
+  }
   @override
   void initState() {
     // TODO: implement initState
@@ -94,9 +121,13 @@ class _ConsultationState extends State<Consultation> {
                 }on DioException catch (e) {
                   print(e);
                 }
-
-
               },
+            ),
+            ElevatedButton(
+                child: Text("upload image"),
+                onPressed : () async{
+                    getImageAndSend();
+                }
             ),
             ElevatedButton(
               child : Text("Go back"),

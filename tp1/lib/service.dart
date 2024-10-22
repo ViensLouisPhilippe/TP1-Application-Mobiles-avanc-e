@@ -99,6 +99,16 @@ Future<void> getHttpUpdateProgress(int id, int progress) async{
   }
 }
 
+Future<String> postPhotoFile(FormData formData) async{
+  try{
+    var response = await SingletonDio.getDio().post('http://10.0.2.2:8080/file', data: formData);
+    return response.data as String;
+  } catch (e){
+    print(e);
+    rethrow;
+  }
+}
+
 class MySingleton {
   MySingleton._();
 
