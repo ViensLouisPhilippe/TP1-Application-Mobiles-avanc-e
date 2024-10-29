@@ -58,6 +58,16 @@ class _ConsultationState extends State<Consultation> {
       setState(() {});
     }
   }
+
+  void hardDeleteTask(int id) async{
+
+    await hardDelete(widget.id);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Accueil(),
+      ),
+    );
+  }
   @override
   void initState() {
     // TODO: implement initState
@@ -137,6 +147,16 @@ class _ConsultationState extends State<Consultation> {
                   MaterialPageRoute(builder: (context) => Accueil(),
                   ),
                 );
+              },
+            ),
+            ElevatedButton(
+              child : Text("Hard delete"),
+              onPressed: () async {
+                try{
+                  hardDeleteTask(task!.id);
+                }on DioException catch (e) {
+                  print(e);
+                }
               },
             ),
           ],

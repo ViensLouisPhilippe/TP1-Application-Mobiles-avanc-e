@@ -98,6 +98,17 @@ Future<void> getHttpUpdateProgress(int id, int progress) async{
     rethrow;
   }
 }
+Future<void> hardDelete(int id) async{
+  try {
+    var response = await SingletonDio.getDio()
+        .delete('http://10.0.2.2:8080/api/task/hard/$id');
+    print(response);
+  } catch (e) {
+    print(e);
+    rethrow;
+  }
+}
+
 
 Future<String> postPhotoFile(FormData formData) async{
   try{
