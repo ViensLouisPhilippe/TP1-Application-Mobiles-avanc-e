@@ -94,3 +94,32 @@ class SigninRequest {
 
   Map<String, dynamic> toJson() => _$SigninRequestToJson(this);
 }
+
+@JsonSerializable()
+class TaskDetailPhotoResponse  {
+  TaskDetailPhotoResponse ();
+
+  int id = 0;
+  String name = '';
+  double percentageDone = 0;
+  double percentageTimeSpent = 0.0;
+  DateTime deadline = DateTime.now();
+  int photoId = 0;
+  factory TaskDetailPhotoResponse.fromJson(Map<String, dynamic> json) => _$TaskDetailPhotoResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TaskDetailPhotoResponseToJson(this);
+}
+@JsonSerializable()
+class HomeItemPhotoResponse  {
+  HomeItemPhotoResponse ();
+
+  int id = 0;
+  String name = '';
+  double percentageDone = 0;
+  double percentageTimeSpent = 0.0;
+  DateTime deadline = DateTime.now();
+  int photoId = 0;
+  factory HomeItemPhotoResponse.fromJson(Map<String, dynamic> json) => _$HomeItemPhotoResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HomeItemPhotoResponseToJson(this);
+}
