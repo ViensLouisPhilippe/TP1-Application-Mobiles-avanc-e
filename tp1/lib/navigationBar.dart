@@ -67,11 +67,12 @@ class NavBar extends StatelessWidget {
             onTap: () async {
               print('Logging out');
               await postHttpSignout();
-              Navigator.push(
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
                   builder: (context) => Connection(),
                 ),
+                    (Route<dynamic> route) => false,
               );
             },
           ),

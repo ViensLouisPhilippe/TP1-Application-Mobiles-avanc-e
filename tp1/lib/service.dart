@@ -119,6 +119,35 @@ Future<String> postPhotoFile(FormData formData) async{
     rethrow;
   }
 }
+Future<TaskDetailPhotoResponse> getHttpDetailTaskPhoto(int id) async{
+  var response = await SingletonDio.getDio().get('http://10.0.2.2:8080/api/detail/photo/$id');
+  print(response);
+  return TaskDetailPhotoResponse.fromJson(response.data);
+}
+Future<List<HomeItemPhotoResponse>> getHttpListPhoto() async {
+
+  List<HomeItemPhotoResponse> tasks = [];
+
+
+  try {
+    var response = await SingletonDio.getDio()
+        .get('http://10.0.2.2:8080/api/home/photo');
+    print(response);
+    var listJson = response.data as List;
+    var listTask = listJson.map(
+            (elementJSON) {
+          return  HomeItemPhotoResponse.fromJson(elementJSON);
+        }
+    ).toList();
+    tasks = listTask;
+    return tasks;
+  } catch (e) {
+    print(e);
+    rethrow;
+  }
+}
+
+
 
 class MySingleton {
   MySingleton._();

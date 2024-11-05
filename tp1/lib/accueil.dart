@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -21,13 +22,27 @@ class Accueil extends StatefulWidget {
 class _AccueilState extends State<Accueil> {
 
 
-  List<HomeItemResponse> tasks = [];
+  List<HomeItemPhotoResponse> tasks = [];
   bool isLoading = true;
-  getTasks() async {
-    tasks = await getHttpList();
+  bool isError = false;
+  String errorMessage = "";
+  Future<void> getTasks() async {
     setState(() {
-      isLoading = false;
+      isLoading = true;
+      isError = false;
     });
+    try {
+      tasks = await getHttpListPhoto();
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+        errorMessage = "erreur dans avec la communication du serveur veuillez réessayez.";
+      });
+    }
   }
 
 
@@ -47,11 +62,45 @@ class _AccueilState extends State<Accueil> {
         ),
       );
     }
+    if (isError) {
+      return Scaffold(
+        drawer: const NavBar(),
+        appBar: AppBar(
+          title: const Text('Liste de tâches'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Creation(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(errorMessage, style: TextStyle(color: Colors.red)),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: getTasks,
+                child: const Text("Réessayez"),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     if(tasks.isEmpty){
       return Scaffold(
         drawer: const NavBar(),
         appBar: AppBar(
-          title: const Text('Task List'),
+          title: const Text('Liste de tâches'),
           actions: [
             IconButton(
               icon: const Icon(Icons.add),
@@ -74,7 +123,7 @@ class _AccueilState extends State<Accueil> {
     return Scaffold(
       drawer: const NavBar(),
       appBar: AppBar(
-        title: const Text('Task List'),
+        title: const Text('Liste de tâches'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -90,24 +139,45 @@ class _AccueilState extends State<Accueil> {
         ],
       ),
       body: ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (context, index) {
-          final HomeItemResponse = tasks[index];
-          return ListTile(
-            title: Text(HomeItemResponse.name),
-            subtitle: Text('Progress: ${HomeItemResponse.percentageDone}% | Elapsed Time: ${HomeItemResponse.percentageTimeSpent}%'),
-            trailing: Text(DateFormat('yyyy-MM-dd').format(HomeItemResponse.deadline)),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Consultation(id: HomeItemResponse.id),
-                ),
-              );
-            },
-          );
-        },
-      ),
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final HomeItemPhotoResponse task = tasks[index];
+
+        return ListTile(
+          title: Text(task.name),
+          subtitle: Text(
+              'Progress: ${task.percentageDone}% | Elapsed Time: ${task.percentageTimeSpent}%'),
+          trailing: Text(DateFormat('yyyy-MM-dd').format(task.deadline)),
+
+          // Conditionally display the image if photoId is not 0
+          contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Consultation(id: task.id),
+              ),
+            );
+          },
+            leading: task.photoId != 0
+                ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: CachedNetworkImage(
+                imageUrl:
+                "http://10.0.2.2:8080/file/${task.photoId}",
+                placeholder: (context, url) =>
+                const CircularProgressIndicator(), // While waiting for the image
+                errorWidget: (context, url, error) =>
+                const Icon(Icons.error), // Error handling
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+              ),
+            )
+                : const SizedBox.shrink(),
+        );
+      },
+    ),
     );
   }
 }
