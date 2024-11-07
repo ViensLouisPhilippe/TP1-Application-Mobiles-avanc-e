@@ -52,7 +52,11 @@ class _AccueilState extends State<Accueil> {
     super.initState();
     getTasks();
   }
-
+Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      await getTasks();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     if (isLoading) {

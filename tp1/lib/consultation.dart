@@ -53,10 +53,10 @@ class _ConsultationState extends State<Consultation> {
         String id = await postPhotoFile(formData);
 
         imageURL = "http://10.0.2.2:8080/file/$id";
-
-        List<Cookie> cookies = await SingletonDio.cookiemanager.cookieJar
-            .loadForRequest(Uri.parse(imageURL));
-        cookie = cookies.first;
+        List<Cookie> cookies = await SingletonDio.cookiemanager.cookieJar.loadForRequest(Uri.parse(imageURL));
+        if (cookies.isNotEmpty) {
+          cookie = cookies.first;
+        }
 
         await getTask();
       } catch (e) {
@@ -110,6 +110,11 @@ class _ConsultationState extends State<Consultation> {
     getTask();
   }
 
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      await getTask();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     if (isLoading) {

@@ -15,8 +15,29 @@ class _ConnectionState extends State<Connection> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isSigningIn = false; // Flag to track the signing in process
+  bool _isSigningIn = false;
 
+  /*@override
+  void initState() {
+    super.initState();
+
+    _checkSession();
+  }
+  Future<void> _checkSession() async {
+    try {
+      bool hasSession = await SingletonDio.hasActiveSession();
+
+      if (hasSession) {
+        // If an active session exists, navigate to the Accueil screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Accueil()),
+        );
+      }
+    } catch (e) {
+      print("Error checking session: $e");
+    }
+  }*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
