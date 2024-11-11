@@ -1,14 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tp1/main.dart';
 import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
+import 'generated/l10n.dart';
 
 import 'consultation.dart';
 import 'creation.dart';
 import 'navigationBar.dart';
-
 
 //PAGE ACCUEIL
 class Accueil extends StatefulWidget {
@@ -19,29 +19,113 @@ class Accueil extends StatefulWidget {
 }
 
 class _AccueilState extends State<Accueil> {
+  List<HomeItemPhotoResponse> tasks = [];
+  bool isLoading = true;
+  bool isError = false;
+  String errorMessage = "";
 
-
-  List<HomeItemResponse> tasks = [];
-  getTasks() async {
-    tasks = await getHttpList();
+  Future<void> getTasks() async {
     setState(() {
+      isLoading = true;
+      isError = false;
     });
+    try {
+      tasks = await getHttpListPhoto();
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+        errorMessage = S.of(context)!.serverError;  // Use translated message
+      });
+    }
   }
-
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getTasks();
   }
 
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      await getTasks();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if (isError) {
+      return Scaffold(
+        drawer: const NavBar(),
+        appBar: AppBar(
+          title: Text(S.of(context)!.taskList),  // Translated title
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Creation(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(errorMessage, style: TextStyle(color: Colors.red)),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: getTasks,
+                child: Text(S.of(context)!.retry),  // Translated button text
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    if (tasks.isEmpty) {
+      return Scaffold(
+        drawer: const NavBar(),
+        appBar: AppBar(
+          title: Text(S.of(context)!.taskList),  // Translated title
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Creation(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        body: Center(
+          child: Text(S.of(context)!.noTasksFound),  // Translated message
+        ),
+      );
+    }
     return Scaffold(
       drawer: const NavBar(),
       appBar: AppBar(
-        title: const Text('Task List'),
+        title: Text(S.of(context)!.taskList),  // Translated title
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -59,167 +143,43 @@ class _AccueilState extends State<Accueil> {
       body: ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) {
-          final HomeItemResponse = tasks[index];
+          final HomeItemPhotoResponse task = tasks[index];
+
           return ListTile(
-            title: Text(HomeItemResponse.name),
-            subtitle: Text('Progress: ${HomeItemResponse.percentageDone}% | Elapsed Time: ${HomeItemResponse.percentageTimeSpent}%'),
-            trailing: Text(DateFormat('yyyy-MM-dd').format(HomeItemResponse.deadline)),
+            title: Text(task.name),
+            subtitle: Text(
+              '${S.of(context)!.progress}: ${task.percentageDone}% | ${S.of(context)!.elapsedTime}: ${task.percentageTimeSpent}%', // Translated strings
+            ),
+            trailing: Text(DateFormat('yyyy-MM-dd').format(task.deadline)),
+
+            contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Consultation(id: HomeItemResponse.id),
+                  builder: (context) => Consultation(id: task.id),
                 ),
               );
             },
+            leading: task.photoId != 0
+                ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: CachedNetworkImage(
+                imageUrl: "http://10.0.2.2:8080/file/${task.photoId}",
+                placeholder: (context, url) =>
+                const CircularProgressIndicator(),  // While waiting for the image
+                errorWidget: (context, url, error) =>
+                const Icon(Icons.error),  // Error handling
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+              ),
+            )
+                : const SizedBox.shrink(),
           );
+
         },
       ),
     );
   }
 }
-
-
-/*class Creation extends StatefulWidget {
-  final Function(Task) onTaskCreated;
-
-  const Creation({super.key, required this.onTaskCreated});
-
-  @override
-  _CreationState createState() => _CreationState();
-}
-
-class _CreationState extends State<Creation> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  DateTime? _dueDate;
-
-  Future<void> _selectDueDate() async {
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (pickedDate != null && pickedDate != _dueDate) {
-      setState(() {
-        _dueDate = pickedDate;
-      });
-    }
-  }
-
-  void _submitTask() {
-    if (_formKey.currentState?.validate() ?? false) {
-      if (_dueDate != null) {
-        final newTask = Task(
-          name: _nameController.text,
-          progress: 0,
-          elapsedTime: 0,
-          dueDate: _dueDate!,
-        );
-        widget.onTaskCreated(newTask);
-        Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please pick a due date.')),
-        );
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: const NavBar(),
-      appBar: AppBar(
-        title: const Text('Create Task'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Task Name'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a task name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              Text(
-                _dueDate == null
-                    ? 'Select Due Date'
-                    : 'Due Date: ${DateFormat('yyyy-MM-dd').format(_dueDate!)}',
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _selectDueDate,
-                child: const Text('Pick a Date'),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitTask,
-                child: const Text('Add Task'),
-              ),
-              ElevatedButton(
-                child : const Text("Go back"),
-                onPressed: (){
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-
-//PAGE CONSULTATION
-class Consultation extends StatelessWidget {
-  final Task task;
-
-  const Consultation({super.key, required this.task});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: const NavBar(),
-      appBar: AppBar(
-        title: const Text('Task Details'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Name: ${task.name}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Text('Progress: ${task.progress}%', style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 10),
-            Text('Elapsed Time: ${task.elapsedTime}%', style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 10),
-            Text('Due Date: ${DateFormat('yyyy-MM-dd').format(task.dueDate)}', style: const TextStyle(fontSize: 18)),
-            ElevatedButton(
-              child : Text("Go back"),
-              onPressed: (){
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}*/
-
-
-
-//NOTE faire 'Flutter clean' avant la remise

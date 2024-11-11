@@ -80,3 +80,45 @@ Map<String, dynamic> _$SigninRequestToJson(SigninRequest instance) =>
       'username': instance.username,
       'password': instance.password,
     };
+
+TaskDetailPhotoResponse _$TaskDetailPhotoResponseFromJson(
+        Map<String, dynamic> json) =>
+    TaskDetailPhotoResponse()
+      ..id = (json['id'] as num).toInt()
+      ..name = json['name'] as String
+      ..percentageDone = (json['percentageDone'] as num).toDouble()
+      ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toDouble()
+      ..deadline = DateTime.parse(json['deadline'] as String)
+      ..photoId = (json['photoId'] as num).toInt();
+
+Map<String, dynamic> _$TaskDetailPhotoResponseToJson(
+        TaskDetailPhotoResponse instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'percentageDone': instance.percentageDone,
+      'percentageTimeSpent': instance.percentageTimeSpent,
+      'deadline': instance.deadline.toIso8601String(),
+      'photoId': instance.photoId,
+    };
+
+HomeItemPhotoResponse _$HomeItemPhotoResponseFromJson(
+        Map<String, dynamic> json) =>
+    HomeItemPhotoResponse()
+      ..id = (json['id'] as num).toInt()
+      ..name = json['name'] as String
+      ..percentageDone = (json['percentageDone'] as num).toDouble()
+      ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toDouble()
+      ..deadline = DateTime.parse(json['deadline'] as String)
+      ..photoId = (json['photoId'] as num).toInt();
+
+Map<String, dynamic> _$HomeItemPhotoResponseToJson(
+        HomeItemPhotoResponse instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'percentageDone': instance.percentageDone,
+      'percentageTimeSpent': instance.percentageTimeSpent,
+      'deadline': instance.deadline.toIso8601String(),
+      'photoId': instance.photoId,
+    };
