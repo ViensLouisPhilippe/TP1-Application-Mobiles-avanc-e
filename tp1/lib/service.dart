@@ -4,6 +4,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tp1/transfer.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -211,7 +212,6 @@ Future<List<HomeItemPhotoResponse>> getHttpListPhoto() async {
 
 class MySingleton {
   MySingleton._();
-
   static final MySingleton _instance = MySingleton._();
 
   factory MySingleton() {
@@ -220,7 +220,20 @@ class MySingleton {
 
   String? username;
 
-  void setUsername(String username) {
-    this.username = username;
+  void setUsername(String newUsername) {
+    username = newUsername;
+    _saveUsernameToPreferences(newUsername);
+  }
+
+  // Load the username from SharedPreferences
+  Future<void> loadUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    username = prefs.getString('username') ?? '';
+  }
+
+  // Save the username to SharedPreferences
+  Future<void> _saveUsernameToPreferences(String newUsername) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', newUsername);
   }
 }

@@ -45,6 +45,7 @@ dependencies:
   cookie_jar: ^4.0.8
   image_picker: ^1.1.2
   file_picker: ^5.5.0
+  shared_preferences: ^2.0.6
 
 dev_dependencies:
   flutter_test:
