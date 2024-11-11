@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tp1/inscription.dart';
 import 'package:tp1/accueil.dart';
-import 'package:tp1/main.dart';
 import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
+import 'generated/l10n.dart';
 
 class Connection extends StatefulWidget {
   @override
@@ -20,16 +20,15 @@ class _ConnectionState extends State<Connection> {
   @override
   void initState() {
     super.initState();
-
     _checkSession();
   }
+
   Future<void> _checkSession() async {
     try {
       await SingletonDio.getDio();
       bool hasSession = await SingletonDio.hasActiveSession();
 
       if (hasSession) {
-        // If an active session exists, navigate to the Accueil screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Accueil()),
@@ -39,108 +38,103 @@ class _ConnectionState extends State<Connection> {
       print("Error checking session: $e");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign In'),
+        title: Text(S.of(context)!.signIn),  // Use translated text here
         automaticallyImplyLeading: false,
       ),
       body: Stack(
         children: [
-          Padding(
+          // Wrap the entire form content in a SingleChildScrollView to allow scrolling
+          SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(labelText: 'Username'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a username';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(labelText: 'Password'),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a password';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      // Show the loading overlay when the sign-in starts
-
-
-                      if(_usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty){
-                        setState(() {
-                          _isSigningIn = true;
-                        });
-                      if (_formKey.currentState?.validate() ?? false) {
-                        try {
-                          // Show snack bar to indicate that the process has started
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Signing In...')),
-                          );
-
-                          // Prepare the sign-in request object
-                          SignupRequest req = SignupRequest();
-                          req.username = _usernameController.text;
-                          req.password = _passwordController.text;
-
-                          // Perform the sign-in request
-                          var response = await postHttpSignIn(req);
-                          print(response);
-
-                          // After successful sign-in, navigate to the Accueil page
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => Accueil()),
-                          );
-                        } on DioException catch (e) {
-                          // Handle any errors that occur during the sign-in process
-                          String message = e.response?.data ?? 'Unknown error';
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(
-                                'utilisateur inexistant veuillez réessayez')),
-                          );
-                          print('Error during sign-in: $message');
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(labelText: S.of(context)!.username),  // Translated label
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return S.of(context)!.pleaseEnterUsername;  // Translated error message
                         }
-                        finally {
-                          // Hide the loading overlay after the sign-in process ends
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(labelText: S.of(context)!.password),  // Translated label
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return S.of(context)!.pleaseEnterPassword;  // Translated error message
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (_usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
                           setState(() {
-                            _isSigningIn = false;
+                            _isSigningIn = true;
                           });
+
+                          if (_formKey.currentState?.validate() ?? false) {
+                            try {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(S.of(context)!.processingData)),  // Translated message
+                              );
+
+                              SignupRequest req = SignupRequest();
+                              req.username = _usernameController.text;
+                              req.password = _passwordController.text;
+
+                              var response = await postHttpSignIn(req);
+                              print(response);
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => Accueil()),
+                              );
+                            } on DioException catch (e) {
+                              String message = e.response?.data ?? 'Unknown error';
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(S.of(context)!.usernameNotFound)),  // Translated error message
+                              );
+                              print('Error during sign-in: $message');
+                            } finally {
+                              setState(() {
+                                _isSigningIn = false;
+                              });
+                            }
+                          }
                         }
-                      }
-                      }
-                    },
-                    child: Text('Sign In'),
-                  ),
-                  ElevatedButton(
-                    child: Text("Don't have an account? Sign up here"),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Inscription()),
-                      );
-                    },
-                  ),
-                ],
+                      },
+                      child: Text(S.of(context)!.signIn),  // Translated button text
+                    ),
+                    ElevatedButton(
+                      child: Text(S.of(context)!.dontHaveAccount),  // Translated button text
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Inscription()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          // If _isSigningIn is true, show the loading overlay
+          // Show the loading indicator if the form is being processed
           if (_isSigningIn)
             Positioned.fill(
               child: Container(

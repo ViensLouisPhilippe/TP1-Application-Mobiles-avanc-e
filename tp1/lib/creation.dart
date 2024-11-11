@@ -5,6 +5,7 @@ import 'package:tp1/accueil.dart';
 import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
 import 'navigationBar.dart';
+import 'generated/l10n.dart';
 
 class Creation extends StatefulWidget {
   const Creation({super.key});
@@ -52,7 +53,7 @@ class _CreationState extends State<Creation> {
 
         if (response != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Task added successfully!')),
+            SnackBar(content: Text(S.of(context)!.taskAddedSuccess)),
           );
           Navigator.pushReplacement(
             context,
@@ -60,7 +61,7 @@ class _CreationState extends State<Creation> {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to add task. Please try again.')),
+            SnackBar(content: Text(S.of(context)!.taskAddFailure)),
           );
         }
       } catch (e) {
@@ -75,7 +76,7 @@ class _CreationState extends State<Creation> {
               final errorMessage = responseBody ?? 'Unknown error';
               if (errorMessage == "Empty") {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Le nom de la tâche est vide")),
+                  SnackBar(content: Text(S.of(context)!.emptyFieldError)),
                 );
               } else if (errorMessage == "TooShort") {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -93,19 +94,16 @@ class _CreationState extends State<Creation> {
             }
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Erreur avec la communication du serveur.')),
+              SnackBar(content: Text(S.of(context)!.taskAddFailure)),
             );
           }
         } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const Accueil()),
-          );
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Accueil()));
         }
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez remplir tous les champs.')),
+        SnackBar(content: Text(S.of(context)!.fillAllFieldsError)),
       );
     }
   }
@@ -115,50 +113,56 @@ class _CreationState extends State<Creation> {
     return Scaffold(
       drawer: const NavBar(),
       appBar: AppBar(
-        title: const Text('Create Task'),
+        title: Text(S.of(context)!.createTaskTitle), // Mise à jour de la référence
       ),
       body: Stack(
         children: [
-          Padding(
+          // Wrap the form content in SingleChildScrollView to allow scrolling
+          SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Task Name'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a task name';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    _dueDate == null
-                        ? 'Select Due Date'
-                        : 'Due Date: ${DateFormat('yyyy-MM-dd').format(_dueDate!)}',
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: _selectDueDate,
-                    child: const Text('Pick a Date'),
-                  ),
-                  const SizedBox(height: 20),
-                  OutlinedButton(
-                    onPressed: _submitTask,
-                    child: const Text('Add Task'),
-                  ),
-                  ElevatedButton(
-                    child: const Text("Go back"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: S.of(context)!.taskNameLabel, // Mise à jour de la référence
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return S.of(context)!.emptyFieldError; // Mise à jour de la référence
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      _dueDate == null
+                          ? S.of(context)!.selectDueDate // Mise à jour de la référence
+                          : 'Due Date: ${DateFormat('yyyy-MM-dd').format(_dueDate!)}',
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _selectDueDate,
+                      child: Text(S.of(context)!.pickDateButton), // Mise à jour de la référence
+                    ),
+                    const SizedBox(height: 20),
+                    OutlinedButton(
+                      onPressed: _submitTask,
+                      child: Text(S.of(context)!.addTaskButton), // Mise à jour de la référence
+                    ),
+                    ElevatedButton(
+                      child: Text(S.of(context)!.goBackButton), // Mise à jour de la référence
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

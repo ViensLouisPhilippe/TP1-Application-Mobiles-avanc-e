@@ -2,14 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tp1/main.dart';
 import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
+import 'generated/l10n.dart';
 
 import 'consultation.dart';
 import 'creation.dart';
 import 'navigationBar.dart';
-
 
 //PAGE ACCUEIL
 class Accueil extends StatefulWidget {
@@ -20,12 +19,11 @@ class Accueil extends StatefulWidget {
 }
 
 class _AccueilState extends State<Accueil> {
-
-
   List<HomeItemPhotoResponse> tasks = [];
   bool isLoading = true;
   bool isError = false;
   String errorMessage = "";
+
   Future<void> getTasks() async {
     setState(() {
       isLoading = true;
@@ -40,23 +38,23 @@ class _AccueilState extends State<Accueil> {
       setState(() {
         isLoading = false;
         isError = true;
-        errorMessage = "erreur dans avec la communication du serveur veuillez réessayez.";
+        errorMessage = S.of(context)!.serverError;  // Use translated message
       });
     }
   }
 
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getTasks();
   }
-Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
       await getTasks();
     }
   }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -70,7 +68,7 @@ Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
       return Scaffold(
         drawer: const NavBar(),
         appBar: AppBar(
-          title: const Text('Liste de tâches'),
+          title: Text(S.of(context)!.taskList),  // Translated title
           actions: [
             IconButton(
               icon: const Icon(Icons.add),
@@ -93,18 +91,18 @@ Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: getTasks,
-                child: const Text("Réessayez"),
+                child: Text(S.of(context)!.retry),  // Translated button text
               ),
             ],
           ),
         ),
       );
     }
-    if(tasks.isEmpty){
+    if (tasks.isEmpty) {
       return Scaffold(
         drawer: const NavBar(),
         appBar: AppBar(
-          title: const Text('Liste de tâches'),
+          title: Text(S.of(context)!.taskList),  // Translated title
           actions: [
             IconButton(
               icon: const Icon(Icons.add),
@@ -120,14 +118,14 @@ Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
           ],
         ),
         body: Center(
-          child: Text("Vous n'avez pas de task on dirait"),
+          child: Text(S.of(context)!.noTasksFound),  // Translated message
         ),
       );
     }
     return Scaffold(
       drawer: const NavBar(),
       appBar: AppBar(
-        title: const Text('Liste de tâches'),
+        title: Text(S.of(context)!.taskList),  // Translated title
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -143,49 +141,45 @@ Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
         ],
       ),
       body: ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        final HomeItemPhotoResponse task = tasks[index];
+        itemCount: tasks.length,
+        itemBuilder: (context, index) {
+          final HomeItemPhotoResponse task = tasks[index];
 
-        return ListTile(
-          title: Text(task.name),
-          subtitle: Text(
-              'Progress: ${task.percentageDone}% | Elapsed Time: ${task.percentageTimeSpent}%'),
-          trailing: Text(DateFormat('yyyy-MM-dd').format(task.deadline)),
+          return ListTile(
+            title: Text(task.name),
+            subtitle: Text(
+              '${S.of(context)!.progress}: ${task.percentageDone}% | ${S.of(context)!.elapsedTime}: ${task.percentageTimeSpent}%', // Translated strings
+            ),
+            trailing: Text(DateFormat('yyyy-MM-dd').format(task.deadline)),
 
-          // Conditionally display the image if photoId is not 0
-          contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Consultation(id: task.id),
-              ),
-            );
-          },
+            contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Consultation(id: task.id),
+                ),
+              );
+            },
             leading: task.photoId != 0
                 ? Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: CachedNetworkImage(
-                imageUrl:
-                "http://10.0.2.2:8080/file/${task.photoId}",
+                imageUrl: "http://10.0.2.2:8080/file/${task.photoId}",
                 placeholder: (context, url) =>
-                const CircularProgressIndicator(), // While waiting for the image
+                const CircularProgressIndicator(),  // While waiting for the image
                 errorWidget: (context, url, error) =>
-                const Icon(Icons.error), // Error handling
+                const Icon(Icons.error),  // Error handling
                 width: 50,
                 height: 50,
                 fit: BoxFit.cover,
               ),
             )
                 : const SizedBox.shrink(),
-        );
-      },
-    ),
+          );
+
+        },
+      ),
     );
   }
 }
-
-
-
-//NOTE faire 'Flutter clean' avant la remise

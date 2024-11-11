@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import 'package:tp1/accueil.dart';
 import 'connexion.dart';
-import 'inscription.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated/l10n.dart';
 
 void main() {
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
@@ -16,17 +16,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: Connection(),
-      /*initialRoute: '/',
-      routes: {
-        '/': (context) => const Accueil(),
-        '/creation': (context) => Creation(onTaskCreated: (task) {}),
-        '/main': (context) => const MyApp(),
-      },*/
+      supportedLocales: [
+        Locale('en', 'US'), // English
+        Locale('fr', 'FR'), // French
+      ],
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        S.delegate
+      ],
     );
   }
 }

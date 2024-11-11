@@ -8,6 +8,7 @@ import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
 import 'accueil.dart';
 import 'navigationBar.dart';
+import 'generated/l10n.dart';
 
 class Consultation extends StatefulWidget {
   final int id;
@@ -118,13 +119,17 @@ class _ConsultationState extends State<Consultation> {
       await getTask();
     }
   }
+
   @override
   Widget build(BuildContext context) {
+    // Récupérer l'orientation actuelle de l'écran
+    Orientation orientation = MediaQuery.of(context).orientation;
+
     if (isLoading) {
       return Scaffold(
         drawer: const NavBar(),
         appBar: AppBar(
-          title: const Text('Task Details'),
+          title: Text(S.of(context)!.taskDetailsTitle),
         ),
         body: const Center(
           child: CircularProgressIndicator(),
@@ -136,75 +141,102 @@ class _ConsultationState extends State<Consultation> {
       return Scaffold(
         drawer: const NavBar(),
         appBar: AppBar(
-          title: const Text('Task Details'),
+          title: Text(S.of(context)!.taskDetailsTitle),
         ),
         body: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Name: ${task!.name}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
-                  Text('Elapsed Time: ${task!.percentageTimeSpent}%', style: const TextStyle(fontSize: 18)),
-                  const SizedBox(height: 10),
-                  Text('Due Date: ${DateFormat('yyyy-MM-dd').format(task!.deadline)}', style: const TextStyle(fontSize: 18)),
+            SingleChildScrollView(  // Wrap the content in a SingleChildScrollView to make it scrollable
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('${S.of(context)!.taskName}${task!.name}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    Text('${S.of(context)!.elapsedTime}${task!.percentageTimeSpent}%', style: const TextStyle(fontSize: 18)),
+                    const SizedBox(height: 10),
+                    Text('${S.of(context)!.dueDate}${DateFormat('yyyy-MM-dd').format(task!.deadline)}', style: const TextStyle(fontSize: 18)),
 
-                  Slider(
-                    value: _currentSliderValue,
-                    max: 100,
-                    divisions: 100,
-                    label: _currentSliderValue.round().toString(),
-                    onChanged: (double value) {
-                      setState(() {
-                        _currentSliderValue = value;
-                      });
-                    },
-                  ),
-                  if (task!.photoId != 0)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: CachedNetworkImage(
-                        imageUrl: "http://10.0.2.2:8080/file/${task!.photoId}",
-                        placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                        width: double.infinity,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
+                    // Affichage du Slider
+                    Slider(
+                      value: _currentSliderValue,
+                      max: 100,
+                      divisions: 100,
+                      label: _currentSliderValue.round().toString(),
+                      onChanged: (double value) {
+                        setState(() {
+                          _currentSliderValue = value;
+                        });
+                      },
                     ),
 
-                  ElevatedButton(
-                    child : Text("Update Progress"),
-                    onPressed: () async {
-                      updateProgress();
-                    },
-                  ),
-                  ElevatedButton(
-                      child: Text("Upload Image"),
-                      onPressed : () async{
-                        getImageAndSend();
-                      }
-                  ),
-                  ElevatedButton(
-                    child : Text("Go Back"),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Accueil()),
-                      );
-                    },
-                  ),
-                  ElevatedButton(
-                    child : Text("Hard Delete"),
-                    onPressed: () async {
-                      hardDeleteTask(task!.id);
-                    },
-                  ),
-                ],
+                    // Affichage de l'image si elle existe
+                    if (task!.photoId != 0)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: CachedNetworkImage(
+                          imageUrl: "http://10.0.2.2:8080/file/${task!.photoId}",
+                          placeholder: (context, url) => const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                          width: double.infinity,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+
+                    // Disposition en fonction de l'orientation
+                    if (orientation == Orientation.portrait) ...[
+                      // En portrait, on affiche les boutons verticalement
+                      ElevatedButton(
+                        child: Text(S.of(context)!.updateProgressButton),
+                        onPressed: () async {
+                          updateProgress();
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text(S.of(context)!.uploadImageButton),
+                        onPressed: () async {
+                          getImageAndSend();
+                        },
+                      ),
+                    ] else ...[
+                      // En paysage, on affiche les boutons horizontalement
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            child: Text(S.of(context)!.updateProgressButton),
+                            onPressed: () async {
+                              updateProgress();
+                            },
+                          ),
+                          ElevatedButton(
+                            child: Text(S.of(context)!.uploadImageButton),
+                            onPressed: () async {
+                              getImageAndSend();
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+
+                    ElevatedButton(
+                      child: Text(S.of(context)!.goBackButton),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Accueil()),
+                        );
+                      },
+                    ),
+                    ElevatedButton(
+                      child: Text(S.of(context)!.hardDeleteButton),
+                      onPressed: () async {
+                        hardDeleteTask(task!.id);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -224,10 +256,10 @@ class _ConsultationState extends State<Consultation> {
       return Scaffold(
         drawer: const NavBar(),
         appBar: AppBar(
-          title: const Text('Task Details'),
+          title: Text(S.of(context)!.taskDetailsTitle),
         ),
         body: const Center(
-          child: Text("Task not found. Please try again."),
+          child: Text('Task not found. Please try again.'),
         ),
       );
     }

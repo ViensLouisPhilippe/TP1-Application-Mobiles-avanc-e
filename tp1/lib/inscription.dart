@@ -4,6 +4,7 @@ import 'package:tp1/connexion.dart';
 import 'package:tp1/accueil.dart';
 import 'package:tp1/service.dart';
 import 'package:tp1/transfer.dart';
+import 'generated/l10n.dart';
 
 class Inscription extends StatefulWidget {
   @override
@@ -16,12 +17,11 @@ class _InscriptionState extends State<Inscription> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
   String _errorMessage = "";
-  bool _isLoading = false;  // Track the loading state
+  bool _isLoading = false;
 
-  // Method for handling the sign up process
   Future<void> inscription(SignupRequest req) async {
     setState(() {
-      _isLoading = true;  // Show loading indicator
+      _isLoading = true;
     });
 
     try {
@@ -37,13 +37,13 @@ class _InscriptionState extends State<Inscription> {
 
       setState(() {
         if (message.contains("UsernameAlreadyTaken")) {
-          _errorMessage = "Le nom d'utilisateur est déjà pris. Veuillez en choisir un autre.";
+          _errorMessage = S.of(context)!.usernameAlreadyTaken;
         } else if (message.contains("UsernameTooShort")) {
-          _errorMessage = "Le nom d'utilisateur est trop court. Il doit comporter au moins 3 caractères.";
+          _errorMessage = S.of(context)!.usernameTooShort;
         } else if (message.contains("PasswordTooShort")) {
-          _errorMessage = "Le mot de passe est trop court. Il doit comporter au moins 4 caractères.";
+          _errorMessage = S.of(context)!.passwordTooShort;
         } else {
-          _errorMessage = "Une erreur inconnue s'est produite. Veuillez réessayer.";
+          _errorMessage = S.of(context)!.unknownError;
         }
         _isLoading = false;
       });
@@ -58,88 +58,91 @@ class _InscriptionState extends State<Inscription> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Up'),
+        title: Text(S.of(context)!.signUp),
         automaticallyImplyLeading: false,
       ),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(labelText: 'Username'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a username';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(labelText: 'Password'),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a password';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: _confirmPasswordController,
-                    decoration: InputDecoration(labelText: 'Confirm Password'),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please confirm your password';
-                      }
-                      if (value != _passwordController.text) {
-                        return 'Passwords do not match';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Processing Data...')),
+          // Scrollable content inside a SingleChildScrollView
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(labelText: S.of(context)!.username),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return S.of(context)!.pleaseEnterUsername;
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(labelText: S.of(context)!.password),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return S.of(context)!.pleaseEnterPassword;
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      decoration: InputDecoration(labelText: S.of(context)!.confirmPassword),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return S.of(context)!.pleaseConfirmPassword;
+                        }
+                        if (value != _passwordController.text) {
+                          return S.of(context)!.passwordsDoNotMatch;
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(S.of(context)!.processingData)),
+                          );
+                          SignupRequest req = SignupRequest();
+                          req.username = _usernameController.text;
+                          req.password = _passwordController.text;
+                          await inscription(req);
+                        }
+                      },
+                      child: Text(S.of(context)!.signUp),
+                    ),
+                    ElevatedButton(
+                      child: Text(S.of(context)!.alreadyHaveAnAccount),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Connection()),
                         );
-                        SignupRequest req = SignupRequest();
-                        req.username = _usernameController.text;
-                        req.password = _passwordController.text;
-                        await inscription(req);
-                      }
-                    },
-                    child: Text('Sign Up'),
-                  ),
-                  ElevatedButton(
-                    child: Text("Already have an account?"),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Connection()),
-                      );
-                    },
-                  ),
-                ],
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          // Loading overlay
+          // Show the loading indicator if the form is being processed
           if (_isLoading)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withOpacity(0.5),  // Semi-transparent overlay
+                color: Colors.black.withOpacity(0.5),
                 child: Center(
-                  child: CircularProgressIndicator(),  // Loading spinner
+                  child: CircularProgressIndicator(),
                 ),
               ),
             ),

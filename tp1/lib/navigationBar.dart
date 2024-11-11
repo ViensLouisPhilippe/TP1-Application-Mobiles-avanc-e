@@ -1,9 +1,9 @@
-//NAVIGATION BAR
 import 'package:flutter/material.dart';
 import 'package:tp1/accueil.dart';
 import 'package:tp1/connexion.dart';
 import 'package:tp1/creation.dart';
 import 'package:tp1/service.dart';
+import 'generated/l10n.dart';
 
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
@@ -12,6 +12,7 @@ class NavBar extends StatelessWidget {
     await MySingleton().loadUsername();
     return MySingleton().username ?? "Guest";
   }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -65,7 +66,7 @@ class NavBar extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.home),
-            title: Text('Home'),
+            title: Text(S.of(context)!.home),  // Translated string
             onTap: () {
               Navigator.of(context).pop();
               Navigator.push(
@@ -78,7 +79,7 @@ class NavBar extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.add),
-            title: Text('Create Task'),
+            title: Text(S.of(context)!.createTask),  // Translated string
             onTap: () {
               Navigator.of(context).pop();
               Navigator.push(
@@ -91,7 +92,7 @@ class NavBar extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.logout),
-            title: Text('Log out'),
+            title: Text(S.of(context)!.logout),  // Translated string
             onTap: () async {
               print('Logging out');
               await postHttpSignout();
