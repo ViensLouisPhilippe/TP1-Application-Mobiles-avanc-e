@@ -67,6 +67,9 @@ class _ConsultationState extends State<Consultation> {
         });
       }
     }
+    setState(() {
+      _isUploading = false;
+    });
   }
 
   void hardDeleteTask(int id) async {

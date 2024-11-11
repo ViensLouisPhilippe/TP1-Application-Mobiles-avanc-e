@@ -17,7 +17,7 @@ class _ConnectionState extends State<Connection> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isSigningIn = false;
 
-  /*@override
+  @override
   void initState() {
     super.initState();
 
@@ -25,6 +25,7 @@ class _ConnectionState extends State<Connection> {
   }
   Future<void> _checkSession() async {
     try {
+      await SingletonDio.getDio();
       bool hasSession = await SingletonDio.hasActiveSession();
 
       if (hasSession) {
@@ -37,7 +38,7 @@ class _ConnectionState extends State<Connection> {
     } catch (e) {
       print("Error checking session: $e");
     }
-  }*/
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,10 +80,12 @@ class _ConnectionState extends State<Connection> {
                   ElevatedButton(
                     onPressed: () async {
                       // Show the loading overlay when the sign-in starts
-                      setState(() {
-                        _isSigningIn = true;
-                      });
 
+
+                      if(_usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty){
+                        setState(() {
+                          _isSigningIn = true;
+                        });
                       if (_formKey.currentState?.validate() ?? false) {
                         try {
                           // Show snack bar to indicate that the process has started
@@ -108,15 +111,18 @@ class _ConnectionState extends State<Connection> {
                           // Handle any errors that occur during the sign-in process
                           String message = e.response?.data ?? 'Unknown error';
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('utilisateur inexistant veuillez réessayez')),
+                            SnackBar(content: Text(
+                                'utilisateur inexistant veuillez réessayez')),
                           );
                           print('Error during sign-in: $message');
-                        } finally {
+                        }
+                        finally {
                           // Hide the loading overlay after the sign-in process ends
                           setState(() {
                             _isSigningIn = false;
                           });
                         }
+                      }
                       }
                     },
                     child: Text('Sign In'),

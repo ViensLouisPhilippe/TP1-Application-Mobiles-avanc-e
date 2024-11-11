@@ -8,29 +8,59 @@ import 'package:tp1/transfer.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SingletonDio {
-  static late PersistCookieJar _cookieJar;
+  static PersistCookieJar? _cookieJar;
   static var cookiemanager = CookieManager(CookieJar());
   static Dio? _dio;
 
-  static Future<Dio> getDio() async {
-    if (_dio == null) {
-      Directory tempDir = await getTemporaryDirectory();
-      String cookiePath = tempDir.path + "/cookies";
+  static Future<void> init() async {
+    // Initialiser _cookieJar s'il est null
+    if (_cookieJar == null) {
+      Directory tempDir = await getApplicationDocumentsDirectory();
+      String cookiePath = tempDir.path + "/cookies"; // Chemin pour stocker les cookies
       _cookieJar = PersistCookieJar(
-        ignoreExpires: true,
         storage: FileStorage(cookiePath),
       );
-
-      _dio = Dio();
-      _dio!.interceptors.add(CookieManager(_cookieJar));
-
     }
 
-    return _dio!;
+    // Initialiser _dio s'il est null
+    if (_dio == null) {
+      _dio = Dio();
+      _dio!.interceptors.add(CookieManager(_cookieJar!)); // Ajout du CookieManager pour gérer les cookies
+    }
   }
+
+  // Retourner une instance Dio avec les cookies
+  static Future<Dio> getDio() async {
+    // Assure-toi que Dio et CookieJar sont initialisés
+    await init();
+    return _dio!; // Retourner l'instance Dio initialisée
+  }
+
+  // Vérifie s'il y a une session active en vérifiant les cookies
   static Future<bool> hasActiveSession() async {
-    List<Cookie> cookies = await _cookieJar.loadForRequest(Uri.parse('http://10.0.2.2:8080'));
+    // Assure-toi que Dio et CookieJar sont initialisés avant de vérifier les cookies
+    await init();
+    List<Cookie> cookies = await _cookieJar!.loadForRequest(Uri.parse('http://10.0.2.2:8080'));
     return cookies.isNotEmpty;
+  }
+
+  // Méthode pour récupérer les cookies (initialisation ou réinitialisation)
+  static Future<void> getCookie() async {
+    await init(); // Assure-toi que CookieJar et Dio sont initialisés
+  }
+
+  static Future<void> deleteCookie() async{
+    try {
+      // Assure que l'initialisation a eu lieu
+      await init();
+
+      // Supprime tous les cookies stockés
+      await _cookieJar!.deleteAll();
+
+      print('Cookies deleted successfully');
+    } catch (e) {
+      print('Error deleting cookies: $e');
+    }
   }
 }
 
@@ -109,6 +139,7 @@ Future<void> postHttpSignout() async {
     var dio = await SingletonDio.getDio(); // Await the future to get Dio instance
     var response = await dio.post('http://10.0.2.2:8080/api/id/signout'); // Send POST request
     print(response);
+    await SingletonDio.deleteCookie();
   } catch (e) {
     print(e);
     rethrow;
